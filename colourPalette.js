@@ -9,9 +9,9 @@ function colourPalette(originalColor, palette) {
         ( originalColor[1] - paletteColor[1] ) ^ 2 +
         ( originalColor[2] - paletteColor[2] ) ^ 2 ;
         if (diff < leastDiff) {
-            result = paletteColor;
+            result = i;
             leastDiff = diff
         }
     }
-    return result
+    return i
 }
