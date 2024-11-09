@@ -25,6 +25,13 @@ export function splitImageSquare(grid, width, height, size) {
         ].push(grid[i]);
         if ( i % width == width - 1 ) {
             // 空白を追加する。
+            for(let j=0; j < (size - ((( i % width ) % size) - 4)); j++) {
+                result[
+                    Math.floor( ( i % width ) / size )
+                ][
+                    Math.floor(i / (size * size * horizontalTiles))
+                ].push(-1);
+            }
         }
     }
     return result
