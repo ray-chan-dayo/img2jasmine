@@ -6,6 +6,8 @@ const imgSize = {width: 0, height: 0 }
 
 const uploadImgSrc = ref()
 
+let colorIndexMap = []
+
 let canvas;
 let ctx;
 const palette = [
@@ -57,6 +59,8 @@ onMounted(()=>{
 
 function loadLocalImage(e) {
   console.log("loadLocalImage")
+  //色コード配列を初期化
+  colorIndexMap = []
   // ファイル情報を取得
   const fileData = e.target.files[0];
 
@@ -114,10 +118,13 @@ function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
       const reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, extendedPalette, x, y);
+      colorIndexMap.push(reducedColorIndex)
+      if (reducedColorIndex == -1) reducedColorIndex = 38;
       ctx.fillStyle = `rgba(${palette[reducedColorIndex][0]}, ${palette[reducedColorIndex][1]}, ${palette[reducedColorIndex][2]}, ${palette[reducedColorIndex][3]})`;
       ctx.fillRect(x,y,1,1);
     }
   }
+  console.log(colorIndexMap)
 }
 
 </script>
