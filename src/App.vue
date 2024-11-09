@@ -101,6 +101,16 @@ function drawImage(){
       let fixedWidth = canvasSize.height / imgSize.height * imgSize.width
       ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
     }
+    colorReduction();
+  }
+}
+function colorReduction(){//減色処理
+  for(let y=0; y<imgSize.height; y++){
+    for(let x=0; x<imgSize.width; x++){
+      const reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1), palette);
+      ctx.fillStyle = `rgb(${palette[reducedColorIndex][0]} ${palette[reducedColorIndex][1]} ${palette[reducedColorIndex][2]})`;
+      ctx.fillRect(x,y,1,1);
+    }
   }
 }
 
