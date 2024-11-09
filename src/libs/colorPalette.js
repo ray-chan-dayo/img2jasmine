@@ -12,14 +12,14 @@ export function colorPalette(originalColor, exPalette, x, y) {
     } else {
         //paletteから検索
         for (let i = 0; i < exPalette.length; i++) {
-            const paletteColor = exPalette[i][0];
+            const paletteColor = exPalette[i].color;
             if (!isColor(paletteColor)) console.error(`Invalid arguments passed to function colorPalette(): palette[${i}] is not a color. (${paletteColor})`);
             const diff = 
             (( originalColor[0] - paletteColor[0] ) ** 2) +
             (( originalColor[1] - paletteColor[1] ) ** 2) +
             (( originalColor[2] - paletteColor[2] ) ** 2) ;
             if (diff < leastDiff) {
-                result = (x+y) % 2 ? i : j;
+                result = (x+y) % 2 ? exPalette[i].src1 : exPalette[i].src2;
                 leastDiff = diff;
             }
         }
@@ -35,3 +35,25 @@ function isColor(color) {
     (typeof color[2] == "number") && (0 <= color[2]) && (color[2] <= 255)
 }
 
+export function extendPalette(palette)
+{
+    const paletteSize = palette.length;
+    const extendedPalette = new Array(paletteSize ** 2);
+    let k = 0;
+    for (let i = 0; i < palette.length; i++) {
+        for (let j = i; j < palette.length; j++) {
+            const resultColor = [
+                (palette[i][0] + palette[j][0]) / 2,
+                (palette[i][1] + palette[j][1]) / 2,
+                (palette[i][2] + palette[j][2]) / 2
+            ]
+            extendedPalette[k] = {
+                color: resultColor,
+                src1: i,
+                src2: j
+            }
+            k++
+        }
+    }
+    return extendedPalette
+}
