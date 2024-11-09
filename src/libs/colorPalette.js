@@ -11,9 +11,9 @@ export function colorPalette(originalColor, palette) {
         const paletteColor = palette[i];
         if (!isColor(paletteColor)) console.error(`Invalid arguments passed to function colorPalette(): palette[${i}] is not a color. (${paletteColor})`);
         const diff = 
-        ( originalColor[0] - paletteColor[0] ) ^ 2 +
-        ( originalColor[1] - paletteColor[1] ) ^ 2 +
-        ( originalColor[2] - paletteColor[2] ) ^ 2 ;
+        (( originalColor[0] - paletteColor[0] ) ** 2) +
+        (( originalColor[1] - paletteColor[1] ) ** 2) +
+        (( originalColor[2] - paletteColor[2] ) ** 2) ;
         if (diff < leastDiff) {
             result = i;
             leastDiff = diff;
