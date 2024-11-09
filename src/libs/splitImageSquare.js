@@ -13,19 +13,31 @@ export function splitImageSquare(grid, width, height, size) {
     const result = JSON.parse(JSON.stringify( // ディープコピー
         new Array(horizontalTiles).fill(new Array(verticalTiles).fill([]))
     ));
-    for (let i = 0; i < grid.length; i++) {
-        result[
-            /* i % widthがx座標
-                x座標 / sizeをfloorすることによって、入るブロックのX座標を取得。*/
-            Math.floor( ( i % width ) / size )
-        ][
-            /* ブロックが1列横並びになるごとに size * size * horizontalTiles ピクセルがある。
-               floorすることによって入るブロックのy座標を取得。                             */
-            Math.floor(i / (size * size * horizontalTiles))
-        ].push(grid[i]);
+    for (let i = 0; i < width*verticalTiles*size; i++) {//縦軸のあまりを考慮
+        if(Math.floor(i / width)>=height){
+            result[
+                /* i % widthがx座標
+                    x座標 / sizeをfloorすることによって、入るブロックのX座標を取得。*/
+                Math.floor( ( i % width ) / size )
+            ][
+                /* ブロックが1列横並びになるごとに size * size * horizontalTiles ピクセルがある。
+                   floorすることによって入るブロックのy座標を取得。                             */
+                Math.floor(i / (size * size * horizontalTiles))
+            ].push(-1);
+        }else{
+            result[
+                /* i % widthがx座標
+                    x座標 / sizeをfloorすることによって、入るブロックのX座標を取得。*/
+                Math.floor( ( i % width ) / size )
+            ][
+                /* ブロックが1列横並びになるごとに size * size * horizontalTiles ピクセルがある。
+                floorすることによって入るブロックのy座標を取得。                             */
+                Math.floor(i / (size * size * horizontalTiles))
+            ].push(grid[i]);
+        }
         if ( i % width == width - 1 ) {
             // 空白を追加する。
-            for(let j=0; j < (size - ((( i % width ) % size) - 4)); j++) {
+            for(let j=0; j < (size - ((( i % width ) % size)+1) ); j++) {
                 result[
                     Math.floor( ( i % width ) / size )
                 ][
