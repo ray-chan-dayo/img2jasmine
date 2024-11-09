@@ -1,4 +1,5 @@
-function colorPalette(originalColor, palette) {
+// import { colorPalette } from "./libs/colorPalette.js"
+export function colorPalette(originalColor, palette) {
     // originalColor = [255,255,255]; //[r,g,b]
     if (!isColor(originalColor)) console.error("Invalid arguments passed to function colorPalette(): originalColor is not a color.");
     // エラー処理
