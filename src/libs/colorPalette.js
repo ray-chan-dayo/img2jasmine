@@ -18,7 +18,7 @@ export function colorPalette(originalColor, exPalette, x, y) {
             (( originalColor[0] - paletteColor[0] ) ** 2) +
             (( originalColor[1] - paletteColor[1] ) ** 2) +
             (( originalColor[2] - paletteColor[2] ) ** 2) +
-            exPalette[i].distance;
+            exPalette[i].distance / 64;
             if (diff < leastDiff) {
                 result = (x+y) % 2 ? exPalette[i].src1 : exPalette[i].src2;
                 leastDiff = diff;
