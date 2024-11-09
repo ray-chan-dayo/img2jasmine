@@ -50,7 +50,7 @@ const palette = [
 
 onMounted(()=>{
   canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d");
+  ctx = canvas.getContext("2d",{ willReadFrequently: true });
 })
 
 function loadLocalImage(e) {
