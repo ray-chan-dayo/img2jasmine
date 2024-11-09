@@ -38,7 +38,7 @@ function isColor(color) {
 export function extendPalette(palette)
 {
     const paletteSize = palette.length;
-    const extendedPalette = new Array(paletteSize ** 2);
+    const extendedPalette = new Array((paletteSize + paletteSize ** 2)/2);
     let k = 0;
     for (let i = 0; i < palette.length; i++) {
         for (let j = i; j < palette.length; j++) {
