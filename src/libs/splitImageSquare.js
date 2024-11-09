@@ -13,7 +13,6 @@ export function splitImageSquare(grid, width, height, size) {
     const result = JSON.parse(JSON.stringify( // ディープコピー
         new Array(horizontalTiles).fill(new Array(verticalTiles).fill([]))
     ));
-    console.log(result[0][0]);
     for (let i = 0; i < grid.length; i++) {
         result[
             /* i % widthがx座標

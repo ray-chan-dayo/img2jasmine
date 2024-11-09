@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, watch} from 'vue'
 import { colorPalette, extendPalette } from './libs/colorPalette';
+import { splitImageSquare } from './libs/splitImageSquare';
+import { exportAsJasmine } from './libs/exportasjasmine';
 const canvasSize = { width: 640, height: 400 }
 const imgSize = {width: 0, height: 0 }
 
@@ -125,7 +127,9 @@ function colorReduction(){//減色処理
       ctx.fillRect(x,y,1,1);
     }
   }
-  console.log(colorIndexMap)
+  pianissimo.innerText = exportAsJasmine(
+    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, 16)
+  );
 }
 
 </script>
@@ -133,7 +137,7 @@ function colorReduction(){//減色処理
 <template>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file">
   <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas>
-
+  <p id="pianissimo"></p>
 </template>
 
 <style scoped>
