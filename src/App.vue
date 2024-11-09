@@ -1,6 +1,10 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch} from 'vue'
+import { colorPalette } from './libs/colorPalette';
 const canvasSize = { width: 640, height: 400 }
+const imgSize = {width: 0, height: 0 }
+
+const uploadImgSrc = ref()
 
 let canvas;
 let ctx;
@@ -43,17 +47,67 @@ const palette = [
   [243, 207, 102],
   [248, 233, 87]
 ]
+
 onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
-
-  ctx.fillStyle = "rgb(11,45,14)";
-  ctx.fillRect(0,0,canvasSize.width,canvasSize.height)
 })
+
+function loadLocalImage(e) {
+  console.log("loadLocalImage")
+  // ファイル情報を取得
+  const fileData = e.target.files[0];
+
+  // 画像ファイル以外は処理を止める
+  if(!fileData.type.match('image.*')) {
+    alert('画像を選択してください');
+    return;
+  }
+
+  // FileReaderオブジェクトを使ってファイル読み込み
+  const reader = new FileReader();
+  // ファイル読み込みに成功したときの処理
+  reader.onload = function() {
+    // uploadImgSrcはwatchで監視されているので、canvasにdrawされる
+    uploadImgSrc.value = reader.result;
+    drawImage()
+    console.log(uploadImgSrc)
+  }
+  // ファイル読み込みを実行
+  reader.readAsDataURL(fileData);
+}
+function drawImage(){
+  ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+
+  // Canvas上に画像を表示
+  var img = new Image()
+  img.src = uploadImgSrc.value
+  img.onload = () => {
+    imgSize.width = img.naturalWidth
+    imgSize.height = img.naturalHeight
+    if(imgSize.width == 0||imgSize.height == 0){
+      //なにもしない
+
+    }else if(imgSize.width<=canvasSize.width && imgSize.height<=canvasSize.height){//入ってきた画像がcanvasSize以下の大きさなら
+      //そのまま描画する
+      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
+
+    } else if (canvasSize.width / imgSize.width * imgSize.height <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
+    //横幅を固定して縦幅を調節する
+    let fixedHeight = canvasSize.width / imgSize.width * imgSize.height
+    ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
+    
+    } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
+      let fixedWidth = canvasSize.height / imgSize.height * imgSize.width
+      ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
+    }
+  }
+}
 
 </script>
 
 <template>
+  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file">
   <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas>
 
 </template>
