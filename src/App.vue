@@ -9,43 +9,44 @@ const uploadImgSrc = ref()
 let canvas;
 let ctx;
 const palette = [
-  [0, 0, 0],
-  [0, 0, 245],
-  [234, 51, 35],
-  [234, 51, 247],
-  [117, 251, 76],
-  [117, 251, 253],
-  [255, 255, 84],
-  [255, 255, 255],
-  [119, 119, 119],
-  [0, 0, 163],
-  [156, 31, 20],
-  [156, 31, 164],
-  [76, 167, 48],
-  [76, 167, 169],
-  [170, 170, 53],
-  [170, 170, 170],
-  [89, 128, 163],
-  [75, 61, 60],
-  [88, 98, 201],
-  [106, 162, 247],
-  [113, 164, 86],
-  [144, 208, 206],
-  [138, 131, 129],
-  [133, 79, 81],
-  [148, 129, 241],
-  [154, 114, 140],
-  [168, 149, 127],
-  [197, 192, 192],
-  [207, 217, 89],
-  [207, 192, 164],
-  [225, 150, 68],
-  [224, 119, 179],
-  [227, 96, 74],
-  [235, 161, 158],
-  [246, 233, 218],
-  [243, 207, 102],
-  [248, 233, 87]
+  [0, 0, 0, 1],
+  [0, 0, 245, 1],
+  [234, 51, 35, 1],
+  [234, 51, 247, 1],
+  [117, 251, 76, 1],
+  [117, 251, 253, 1],
+  [255, 255, 84, 1],
+  [255, 255, 255, 1],
+  [119, 119, 119, 1],
+  [0, 0, 163, 1],
+  [156, 31, 20, 1],
+  [156, 31, 164, 1],
+  [76, 167, 48, 1],
+  [76, 167, 169, 1],
+  [170, 170, 53, 1],
+  [170, 170, 170, 1],
+  [89, 128, 163, 1],
+  [75, 61, 60, 1],
+  [88, 98, 201, 1],
+  [106, 162, 247, 1],
+  [113, 164, 86, 1],
+  [144, 208, 206, 1],
+  [138, 131, 129, 1],
+  [133, 79, 81, 1],
+  [148, 129, 241, 1],
+  [154, 114, 140, 1],
+  [168, 149, 127, 1],
+  [197, 192, 192, 1],
+  [207, 217, 89, 1],
+  [207, 192, 164, 1],
+  [225, 150, 68, 1],
+  [224, 119, 179, 1],
+  [227, 96, 74, 1],
+  [235, 161, 158, 1],
+  [246, 233, 218, 1],
+  [243, 207, 102, 1],
+  [248, 233, 87, 1],
+  [0, 0, 0, 0]
 ]
 
 onMounted(()=>{
@@ -96,10 +97,14 @@ function drawImage(){
     //横幅を固定して縦幅を調節する
     let fixedHeight = canvasSize.width / imgSize.width * imgSize.height
     ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
-    
+    imgSize.width = canvasSize.width; 
+    imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
+
     } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
       let fixedWidth = canvasSize.height / imgSize.height * imgSize.width
       ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
+      imgSize.width = fixedWidth;
+      imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
     }
     colorReduction();
   }
@@ -108,7 +113,7 @@ function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
       const reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, palette);
-      ctx.fillStyle = `rgb(${palette[reducedColorIndex][0]} ${palette[reducedColorIndex][1]} ${palette[reducedColorIndex][2]})`;
+      ctx.fillStyle = `rgba(${palette[reducedColorIndex][0]} ${palette[reducedColorIndex][1]} ${palette[reducedColorIndex][2]} ${palette[reducedColorIndex][3]})`;
       ctx.fillRect(x,y,1,1);
     }
   }
