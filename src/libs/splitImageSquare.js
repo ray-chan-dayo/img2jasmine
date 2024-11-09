@@ -17,7 +17,7 @@ export function splitImageSquare(grid, width, height, size) {
     for (let i = 0; i < grid.length; i++) {
         result[
             /* i % widthがx座標
-               x座標 / sizeをfloorすることによって、入るブロックのX座標を取得。*/
+                x座標 / sizeをfloorすることによって、入るブロックのX座標を取得。*/
             Math.floor( ( i % width ) / size )
         ][
             /* ブロックが1列横並びになるごとに size * size * horizontalTiles ピクセルがある。
