@@ -1,6 +1,6 @@
 export function exportAsJasmine(neko) {
     const x = neko.length
-    const y = neko.length
+    const y = neko[0].length
     for (let i = 0; i < neko.length; i++) {
         neko[i] = neko[i].join("\n  data ")
     }
@@ -15,7 +15,7 @@ return `procedure printPic w,h
         read p@[i]
       next
       def pic picNum,p@
-      put (16*y,16*x),picNum
+      put (16*x,16*y),picNum
     next
   next
 
