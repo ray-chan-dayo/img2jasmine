@@ -23,6 +23,9 @@ export function splitImageSquare(grid, width, height, size) {
                floorすることによって入るブロックのy座標を取得。                             */
             Math.floor(i / (size * size * horizontalTiles))
         ].push(grid[i]);
+        if ( i % width == width - 1 ) {
+            // 空白を追加する。
+        }
     }
     return result
 }
