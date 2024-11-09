@@ -117,7 +117,7 @@ function drawImage(){
 function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
-      const reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, extendedPalette, x, y);
+      let reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, extendedPalette, x, y);
       colorIndexMap.push(reducedColorIndex)
       if (reducedColorIndex == -1) reducedColorIndex = 38;
       ctx.fillStyle = `rgba(${palette[reducedColorIndex][0]}, ${palette[reducedColorIndex][1]}, ${palette[reducedColorIndex][2]}, ${palette[reducedColorIndex][3]})`;
