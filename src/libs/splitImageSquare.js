@@ -4,7 +4,7 @@ export function splitImageSquare(colorMap, width, height, size) {
         size == 0 ||
         width == 0 ||
         height == 0 ||
-        !grid
+        !colorMap
     ) console.error(`Invalid arguments passed to function splitImageSquare()`);
     
     const horizontalTiles = Math.ceil(width / size);
@@ -18,7 +18,7 @@ export function splitImageSquare(colorMap, width, height, size) {
         new Array(horizontalTiles).fill(new Array(verticalTiles).fill([]))
     ));
     for (let i = 0; i < width*verticalTiles*size; i++) {//縦軸のあまりを考慮
-        if(Math.floor(i / width)>=height){
+        if(rawY >= height){
             // 下空白
             result[blockX][blockY].push(-1);
         }else{
