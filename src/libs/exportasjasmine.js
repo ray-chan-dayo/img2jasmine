@@ -7,8 +7,8 @@ export function exportAsJasmine(splittedImg) {
     splittedImg = splittedImg.join("\n  data ")
 
 return `procedure printPic startX, startY, startPicNum
-  for x=0 to ${x-1}
-    for y=0 to ${y-1}
+  for y=0 to ${y-1}
+    for x=0 to ${x-1}
       let p@=[]
       for i=0 to 255
         read p@[i]

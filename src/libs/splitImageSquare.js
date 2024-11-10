@@ -33,13 +33,13 @@ export function splitImageSquare(colorMap, width, height, size) {
         const blockX = Math.floor(rawX/size)
         const blockY = Math.floor(rawY/size)
         
-        result[blockX][blockY].push(colorMap[i]);
+        result[blockY][blockX].push(colorMap[i]);
     }
     if(!horizontalRemainder == 0){ //横方向のあまりが一つ以上ある場合、空白を-1で埋める
         for (let i=0; i<verticalTiles; i++){
             for (let j=size; j>0; j--){
                 for (let k=0; k<(size-horizontalRemainder); k++){
-                    result[horizontalTiles-1][i].splice(horizontalRemainder*j,0,-1)
+                    result[i][horizontalTiles-1].splice(horizontalRemainder*j,0,-1)
                 }
             }
         }
@@ -47,7 +47,7 @@ export function splitImageSquare(colorMap, width, height, size) {
     if(!verticalRemainder == 0){ //縦方向のあまりが一つ以上ある場合、空白を-1で埋める
         for (let i=0; i<horizontalTiles; i++){
             for (let k=0; k<(size-verticalRemainder); k++){
-                result[i][verticalTiles-1].push(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1)
+                result[verticalTiles-1][i].push(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1)
             }
         }
     }
