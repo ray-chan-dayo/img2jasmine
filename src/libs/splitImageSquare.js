@@ -25,7 +25,7 @@ export function splitImageSquare(colorMap, width, height, size) {
     const verticalRemainder = height % size;
 
     const result = JSON.parse(JSON.stringify( // ディープコピー
-        new Array(horizontalTiles).fill(new Array(verticalTiles).fill([]))
+        new Array(verticalTiles).fill(new Array(horizontalTiles).fill([]))
     ));
     for (let i = 0; i < width*height; i++) {//縦軸のあまりを考慮
         const rawX = i % width
