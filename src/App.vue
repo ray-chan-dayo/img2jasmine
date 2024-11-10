@@ -127,9 +127,10 @@ function colorReduction(){//減色処理
       ctx.fillRect(x,y,1,1);
     }
   }
-  pianissimo.innerText = exportAsJasmine(
+  outputArea.innerText = exportAsJasmine(
     splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, 16)
   );
+  navigator.clipboard.writeText(outputArea.innerText)
 }
 
 </script>
@@ -137,7 +138,7 @@ function colorReduction(){//減色処理
 <template>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file">
   <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas>
-  <p id="pianissimo"></p>
+  <p id="outputArea"></p>
 </template>
 
 <style scoped>
