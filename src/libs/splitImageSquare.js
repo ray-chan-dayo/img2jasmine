@@ -27,7 +27,6 @@ export function splitImageSquare(colorMap, width, height, size) {
     if(!horizontalRemainder == 0){ //横方向のあまりが一つ以上ある場合、空白を-1で埋める
         for (let i=0; i<verticalTiles; i++){
             for (let j=size; j>0; j--){
-                console.log('for loop')
                 for (let k=0; k<(size-horizontalRemainder); k++){
                     result[horizontalTiles-1][i].splice(horizontalRemainder*j,0,-1)
                 }
