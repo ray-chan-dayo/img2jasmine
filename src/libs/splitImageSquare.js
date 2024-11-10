@@ -26,7 +26,7 @@ export function splitImageSquare(colorMap, width, height, size) {
         }
         if ( rawX == width - 1 ) {
             // 空白を追加する。
-            for(let j=0; j < (size - ((rawX % size)+1) ); j++) {
+            for(let j = rawX; j < size; j++) {
                 result[blockX][blockY].push(-1);
             }
         }
