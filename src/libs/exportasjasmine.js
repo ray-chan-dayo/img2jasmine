@@ -1,6 +1,6 @@
 export function exportAsJasmine(splittedImg) {
-    const x = splittedImg.length
-    const y = splittedImg[0].length
+    const x = splittedImg[0].length
+    const y = splittedImg.length
     for (let i = 0; i < splittedImg.length; i++) {
         splittedImg[i] = splittedImg[i].join("\n  data ")
     }
