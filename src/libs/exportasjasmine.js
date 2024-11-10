@@ -6,7 +6,7 @@ export function exportAsJasmine(splittedImg) {
     }
     splittedImg = splittedImg.join("\n  data ")
 
-return `procedure printPic w,h
+return `procedure printPic startX, startY, w, h
   let picNum = 100
   let p@=[]
   for x=0 to w
@@ -15,13 +15,11 @@ return `procedure printPic w,h
         read p@[i]
       next
       def pic picNum,p@
-      put (16*x,16*y),picNum
+      put (16*x + startX,16*y + startY),picNum
     next
   next
 
   data ${splittedImg}
-end procedure
-call printPic ${x-1},${y-1}
-end`
+end procedure`
 
 }

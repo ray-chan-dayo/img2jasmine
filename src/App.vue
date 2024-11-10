@@ -8,13 +8,20 @@ const imgSize = {width: 0, height: 0 }
 
 const uploadImgSrc = ref()
 
+const size = 16;
+
 let colorIndexMap = []
 
 let canvas;
 let ctx;
+let outputArea;
+
+let procedure;
+
+const startX = ref(0);
+const startY = ref(0);
 
 const outputJasmine = ref();
-const outputLines = ref();
 
 const palette = [
   [0, 0, 0, 255],
@@ -62,6 +69,10 @@ const extendedPalette = extendPalette(palette)
 onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d",{ willReadFrequently: true });
+  outputArea = document.getElementById("outputArea")
+
+  watch(startX, () =>{if(procedure)makeOutputJasmine()});
+  watch(startY, () =>{if(procedure)makeOutputJasmine()});
 })
 
 function loadLocalImage(e) {
@@ -131,11 +142,16 @@ function colorReduction(){//減色処理
       ctx.fillRect(x,y,1,1);
     }
   }
-  outputJasmine.value = exportAsJasmine(
-    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, 16)
-  );
-  outputArea.value = outputJasmine.value
-  outputLines.value = (outputArea.value + '\n').match(/\n/g).length;
+  procedure = exportAsJasmine(
+    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, size)
+  )
+  makeOutputJasmine()
+}
+function makeOutputJasmine(){
+  outputJasmine.value = procedure + `
+call printPic ${startX.value},${startY.value},${Math.ceil(imgSize.width / size)-1},${Math.ceil(imgSize.height / size)-1}
+end`;
+  outputArea.value = outputJasmine.value;
   navigator.clipboard.writeText(outputJasmine.value)
 }
 
@@ -146,9 +162,18 @@ function textareaOnClick(){
 </script>
 
 <template>
+  <label>
+    配置するx座標
+    <input type="number" v-model="startX"/>
+  </label>
+  <label>
+    配置するy座標
+    <input type="number" v-model="startY"/>
+  </label>
+  <br/><br/>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
   <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas><br/>
-  <textarea id="outputArea" :rows="outputLines" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
+  <textarea id="outputArea" rows="25" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
 </template>
 
 <style scoped>
