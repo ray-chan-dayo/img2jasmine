@@ -20,6 +20,7 @@ let procedure;
 
 const startX = ref(0);
 const startY = ref(0);
+const startPicNum = ref(100);
 
 const outputJasmine = ref();
 
@@ -149,7 +150,7 @@ function colorReduction(){//減色処理
 }
 function makeOutputJasmine(){
   outputJasmine.value = procedure + `
-call printPic ${startX.value},${startY.value},${Math.ceil(imgSize.width / size)-1},${Math.ceil(imgSize.height / size)-1}
+call printPic ${startX.value},${startY.value},${startPicNum.value}
 end`;
   outputArea.value = outputJasmine.value;
   navigator.clipboard.writeText(outputJasmine.value)
@@ -169,6 +170,10 @@ function textareaOnClick(){
   <label>
     配置するy座標
     <input type="number" v-model="startY"/>
+  </label><br/>
+  <label>
+    PIC パターン番号の開始位置
+    <input type="number" v-model="startPicNum">
   </label>
   <br/><br/>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
