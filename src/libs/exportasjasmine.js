@@ -1,10 +1,10 @@
-export function exportAsJasmine(neko) {
-    const x = neko.length
-    const y = neko[0].length
-    for (let i = 0; i < neko.length; i++) {
-        neko[i] = neko[i].join("\n  data ")
+export function exportAsJasmine(splittedImg) {
+    const x = splittedImg.length
+    const y = splittedImg[0].length
+    for (let i = 0; i < splittedImg.length; i++) {
+        splittedImg[i] = splittedImg[i].join("\n  data ")
     }
-    neko = neko.join("\n  data ")
+    splittedImg = splittedImg.join("\n  data ")
 
 return `procedure printPic w,h
   let picNum = 100
@@ -19,7 +19,7 @@ return `procedure printPic w,h
     next
   next
 
-  data ${neko}
+  data ${splittedImg}
 end procedure
 call printPic ${x-1},${y-1}
 end`
