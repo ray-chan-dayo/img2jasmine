@@ -12,6 +12,10 @@ let colorIndexMap = []
 
 let canvas;
 let ctx;
+
+const outputJasmine = ref();
+const outputLines = ref();
+
 const palette = [
   [0, 0, 0, 255],
   [0, 0, 255, 255],
@@ -127,20 +131,31 @@ function colorReduction(){//減色処理
       ctx.fillRect(x,y,1,1);
     }
   }
-  outputArea.innerText = exportAsJasmine(
+  outputJasmine.value = exportAsJasmine(
     splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, 16)
   );
-  navigator.clipboard.writeText(outputArea.innerText)
+  outputArea.value = outputJasmine.value
+  outputLines.value = (outputArea.value + '\n').match(/\n/g).length;
+  navigator.clipboard.writeText(outputJasmine.value)
 }
 
+function textareaOnClick(){
+  outputArea.select();
+  navigator.clipboard.writeText(outputJasmine.value)
+}
 </script>
 
 <template>
-  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file">
-  <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas>
-  <p id="outputArea"></p>
+  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
+  <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas><br/>
+  <textarea id="outputArea" :rows="outputLines" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
 </template>
 
 <style scoped>
-
+  #textarea {
+    resize: none;
+    line-height: 1.5;
+    width: 100%;
+    padding: 10;
+  }
 </style>
