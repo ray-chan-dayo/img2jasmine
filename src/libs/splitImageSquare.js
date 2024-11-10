@@ -1,11 +1,22 @@
 export function splitImageSquare(colorMap, width, height, size) {
-    console.log(width,height)
     if (
-        size == 0 ||
-        width == 0 ||
-        height == 0 ||
+        typeof size != "number" ||
+        size <= 0 ||
+        Math.floor(size) != size
+    ) console.error(`Invalid arguments passed to function splitImageSquare(): size is invalid (${size})`);
+    if (
+        typeof width != "number" ||
+        width <= 0 ||
+        Math.floor(width) != width
+    ) console.error(`Invalid arguments passed to function splitImageSquare(): width is invalid (${width})`);
+    if (
+        typeof height != "number" ||
+        height <= 0 ||
+        Math.floor(height) != height
+    ) console.error(`Invalid arguments passed to function splitImageSquare(): height is invalid (${height})`);
+    if (
         !colorMap
-    ) console.error(`Invalid arguments passed to function splitImageSquare()`);
+    ) console.error(`Invalid arguments passed to function splitImageSquare(): colorMap is invalid (${colorMap})`);
     
     const horizontalTiles = Math.ceil(width / size);
     const verticalTiles = Math.ceil(height / size);
