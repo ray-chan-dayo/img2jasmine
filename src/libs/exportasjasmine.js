@@ -6,19 +6,38 @@ export function exportAsJasmine(splittedImg) {
     }
     splittedImg = splittedImg.join("\n  data ")
 
-return `procedure printPic startX, startY, startPicNum
-  for y=0 to ${y-1}
-    for x=0 to ${x-1}
-      let p@=[]
-      for i=0 to 255
-        read p@[i]
-      next
-      def pic startPicNum,p@
-      put (16*x + startX,16*y + startY),startPicNum
-      startPicNum = startPicNum + 1
+return `// Pic番号をstartPicNum+1000番まで上書きします。
+procedure printBackground startPicNum,backgroundNum
+  let w = ${x}
+  let h = ${y}
+  let blank@ = []
+  let picNumLs@ = []
+  // blankのpicパターンを定義
+  for i=0 to 255
+    blank@[i] = -1
+  next
+  def pic startPicNum+1000,blank@
+
+  let picNum = startPicNum
+  for y=0 to 24
+    for x=0 to 39
+      let pic@=[]
+      if x<w AND y<h then
+        // readData
+        for i=0 to 255
+          read pic@[i]
+        next
+        def pic picNum,pic@
+        picNumLs@[x+y*40] = picNum
+        picNum = picNum + 1
+      else
+        // blank
+        picNumLs@[x+y*40] = startPicNum + 1000
+      end if
     next
   next
-
+  def background backgroundNum,picNumLs@,-1
+  background backgroundNum
   data ${splittedImg}
 end procedure`
 

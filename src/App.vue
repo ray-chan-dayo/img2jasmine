@@ -150,7 +150,7 @@ function colorReduction(){//減色処理
 }
 function makeOutputJasmine(){
   outputJasmine.value = procedure + `
-call printPic ${startX.value},${startY.value},${startPicNum.value}
+call printBackground ${startPicNum.value},1
 end`;
   outputArea.value = outputJasmine.value;
   navigator.clipboard.writeText(outputJasmine.value)
