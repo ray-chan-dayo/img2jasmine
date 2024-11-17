@@ -6,6 +6,7 @@ export function exportAsJasmine(splittedImg) {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const joined = splittedImg[y][x].join()
+        // 画像圧縮
         const refIndex = result.indexOf(joined)
         if (refIndex === -1) 
           result.push(joined)
@@ -14,7 +15,6 @@ export function exportAsJasmine(splittedImg) {
       }
       i++
     }
-    
     splittedImg = result.join("\n  data ")
 
 return `// Pic番号をstartPicNum+1000番まで上書きします。
