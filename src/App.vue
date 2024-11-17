@@ -130,20 +130,20 @@ function drawImage(){
         ctx.drawImage(img, startX, startY, img.naturalWidth, img.naturalHeight)
 
       } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
-      //横幅を固定して縦幅を調節する
+      //横幅をcanvasSizeにする
       let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
       ctx.drawImage(img, startX, startY, canvasSize.width, fixedHeight)
       imgSize.width = canvasSize.width; 
       imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-      } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
+      } else {//どれでもなければ縦幅をcanvasSizeにする
         let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
         ctx.drawImage(img, startX, startY, fixedWidth, canvasSize.height)
         imgSize.width = fixedWidth;
         imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
       }
     }
-    if(startX>0 || startY>0){ //配置座標が変更されていたら
+    if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
       imgSize.width = Math.min(imgSize.width + startX, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
       imgSize.height = Math.min(imgSize.height + startY, 400);
     }
