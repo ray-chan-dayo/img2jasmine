@@ -200,7 +200,7 @@ function textareaOnClick(){
       <input type="number" v-model="inputW"/>
     </label>
     <label>
-      配置するy座標
+      画像の縦幅
       <input type="number" v-model="inputH"/>
     </label>
   </div>
