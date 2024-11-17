@@ -210,7 +210,7 @@ function textareaOnClick(){
     <input type="number" v-model="startPicNum">
   </label>
   <br/><br/>
-  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
+  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/><br/>
   <button @click="drawImage" v-if="isImageLoaded">実行！</button><br/>
   <canvas id="canvas" :width="WIDTH" :height="HEIGHT"></canvas><br/>
   <textarea id="outputArea" rows="25" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
