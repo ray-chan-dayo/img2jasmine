@@ -20,6 +20,11 @@ let procedure;
 
 const startX = ref(0);
 const startY = ref(0);
+
+const useInputWH = ref(false);
+const inputW = ref(640);
+const inputH = ref(400);
+
 const startPicNum = ref(100);
 
 const outputJasmine = ref();
@@ -110,25 +115,32 @@ function drawImage(){
   img.onload = () => {
     imgSize.width = img.naturalWidth
     imgSize.height = img.naturalHeight
-    if(imgSize.width == 0||imgSize.height == 0){
-      //なにもしない
+    if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
+      ctx.drawImage(img, 0, 0, inputW.value, inputH.value);//ユーザー様の仰せのままに
+      imgSize.width = inputW.value;
+      imgSize.height = inputH.value;
+    } else {
+      //特にユーザーの指定がなければこっちでごちゃごちゃする
+      if(imgSize.width == 0||imgSize.height == 0){
+        //なにもしない
 
-    }else if(imgSize.width<=canvasSize.width && imgSize.height<=canvasSize.height){//入ってきた画像がcanvasSize以下の大きさなら
-      //そのまま描画する
-      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
+      }else if(imgSize.width<=canvasSize.width && imgSize.height<=canvasSize.height){//入ってきた画像がcanvasSize以下の大きさなら
+        //そのまま描画する
+        ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
 
-    } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
-    //横幅を固定して縦幅を調節する
-    let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
-    ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
-    imgSize.width = canvasSize.width; 
-    imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
+      } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
+      //横幅を固定して縦幅を調節する
+      let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
+      ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
+      imgSize.width = canvasSize.width; 
+      imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-    } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
-      let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
-      ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
-      imgSize.width = fixedWidth;
-      imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
+      } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
+        let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
+        ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
+        imgSize.width = fixedWidth;
+        imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
+      }
     }
     colorReduction();
   }
@@ -171,7 +183,22 @@ function textareaOnClick(){
   <label>
     配置するy座標
     <input type="number" v-model="startY"/>
-  </label><br/>
+  </label><br/><br/>
+  <label>
+    画面の縦横幅を指定
+    <input type="checkbox" v-model="useInputWH">
+  </label>
+  <div v-if="useInputWH">
+    <label>
+      画像の横幅
+      <input type="number" v-model="inputW"/>
+    </label>
+    <label>
+      配置するy座標
+      <input type="number" v-model="inputH"/>
+    </label>
+  </div>
+  <br/>
   <label>
     PIC パターン番号の開始位置
     <input type="number" v-model="startPicNum">
