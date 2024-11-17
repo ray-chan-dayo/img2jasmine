@@ -130,16 +130,16 @@ function drawImage(){
         //そのまま描画する
         ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
 
-      } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
+      } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
       //横幅をcanvasSizeにする
-      let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
-      ctx.drawImage(img, startX.value, startY.value, canvasSize.width, fixedHeight)
-      imgSize.width = canvasSize.width; 
+      let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
+      ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
+      imgSize.width = WIDTH; 
       imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
       } else {//どれでもなければ縦幅をcanvasSizeにする
-        let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
-        ctx.drawImage(img, startX.value, startY.value, fixedWidth, canvasSize.height)
+        let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
+        ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
         imgSize.width = fixedWidth;
         imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
       }
