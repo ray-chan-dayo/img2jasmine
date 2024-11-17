@@ -145,8 +145,8 @@ function drawImage(){
       }
     }
     if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
-      imgSize.width = Math.min(imgSize.width + startX, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
-      imgSize.height = Math.min(imgSize.height + startY, 400);
+      imgSize.width = Math.min(imgSize.width + startX.value, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+      imgSize.height = Math.min(imgSize.height + startY.value, 400);
     }
     colorReduction();
   }
