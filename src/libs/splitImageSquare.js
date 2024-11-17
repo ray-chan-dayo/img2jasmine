@@ -53,14 +53,3 @@ export function splitImageSquare(colorMap, width, height, size) {
     }
     return result
 }
-
-function contextToGrid(ctx){
-    const result = []
-    for (let i = 0, j = 0; i < ctx.length; i+=4) {
-        result[j][0] = ctx[i];   //r
-        result[j][1] = ctx[i+1]; //g
-        result[j][2] = ctx[i+2]; //b
-        j++;
-    }
-    return result
-}

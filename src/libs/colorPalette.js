@@ -20,7 +20,10 @@ export function colorPalette(originalColor, exPalette, x, y) {
             (( originalColor[2] - paletteColor[2] ) ** 2) +
             exPalette[i].distance / 64;
             if (diff < leastDiff) {
-                result = (x+y) % 2 ? exPalette[i].src1 : exPalette[i].src2;
+                result = (x+y) % 2 ?
+                    exPalette[i].src1 :
+                    y % exPalette[i].ratio ? exPalette[i].src1 :
+                        exPalette[i].src2;
                 leastDiff = diff;
             }
         }
@@ -56,6 +59,28 @@ export function extendPalette(palette)
                 color: resultColor,
                 src1: i,
                 src2: j,
+                ratio: 1,
+                distance: distance
+            }
+            k++
+        }
+    }
+    for (let i = 0; i < palette.length; i++) {
+        for (let j = 0; j < palette.length; j++) {
+            const resultColor = [
+                (palette[i][0] * 3 + palette[j][0]) / 4,
+                (palette[i][1] * 3 + palette[j][1]) / 4,
+                (palette[i][2] * 3 + palette[j][2]) / 4
+            ]
+            const distance = 
+            (palette[i][0] - palette[j][0]) ** 2 +
+            (palette[i][1] - palette[j][1]) ** 2 +
+            (palette[i][2] - palette[j][2]) ** 2
+            extendedPalette[k] = {
+                color: resultColor,
+                src1: i,
+                src2: j,
+                ratio: 2,
                 distance: distance
             }
             k++

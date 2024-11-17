@@ -3,8 +3,9 @@ import { onMounted, ref, watch} from 'vue'
 import { colorPalette, extendPalette } from './libs/colorPalette';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
-const canvasSize = { width: 640, height: 400 }
 const imgSize = {width: 0, height: 0 }
+const WIDTH = 640
+const HEIGHT = 400
 
 const uploadImgSrc = ref()
 
@@ -18,8 +19,15 @@ let outputArea;
 
 let procedure;
 
+const isImageLoaded = ref(false);
+
 const startX = ref(0);
 const startY = ref(0);
+
+const useInputWH = ref(false);
+const inputW = ref(640);
+const inputH = ref(400);
+
 const startPicNum = ref(100);
 
 const outputJasmine = ref();
@@ -71,12 +79,11 @@ onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d",{ willReadFrequently: true });
   outputArea = document.getElementById("outputArea")
-
-  watch(startX, () =>{if(procedure)makeOutputJasmine()});
-  watch(startY, () =>{if(procedure)makeOutputJasmine()});
 })
 
 function loadLocalImage(e) {
+  isImageLoaded.value = false;
+
   console.log("loadLocalImage")
   //色コード配列を初期化
   colorIndexMap = []
@@ -93,16 +100,24 @@ function loadLocalImage(e) {
   const reader = new FileReader();
   // ファイル読み込みに成功したときの処理
   reader.onload = function() {
-    // uploadImgSrcはwatchで監視されているので、canvasにdrawされる
     uploadImgSrc.value = reader.result;
-    drawImage()
-    console.log(uploadImgSrc)
+    console.log(uploadImgSrc.value);
+    isImageLoaded.value = true;
   }
   // ファイル読み込みを実行
   reader.readAsDataURL(fileData);
 }
 function drawImage(){
-  ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+  procedure = undefined;//出力を初期化
+  outputArea.value = "";
+  colorIndexMap = [];
+
+  if(startX.value == '') startX.value = 0; //inputの例外対策
+  if(startY.value == '') startY.value = 0;
+  if(inputW.value == '') inputW.value = WIDTH;
+  if(inputH.value == '') inputH.value = HEIGHT;
+
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
   // Canvas上に画像を表示
   var img = new Image()
@@ -110,25 +125,37 @@ function drawImage(){
   img.onload = () => {
     imgSize.width = img.naturalWidth
     imgSize.height = img.naturalHeight
-    if(imgSize.width == 0||imgSize.height == 0){
-      //なにもしない
+    if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
+      ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
+      imgSize.width = inputW.value;
+      imgSize.height = inputH.value;
 
-    }else if(imgSize.width<=canvasSize.width && imgSize.height<=canvasSize.height){//入ってきた画像がcanvasSize以下の大きさなら
-      //そのまま描画する
-      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
+    } else {
+      //特にユーザーの指定がなければこっちでごちゃごちゃする
+      if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
+        //なにもしない
+        alert("画像サイズが0x0です")
+      }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
+        //そのまま描画する
+        ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
 
-    } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
-    //横幅を固定して縦幅を調節する
-    let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
-    ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
-    imgSize.width = canvasSize.width; 
-    imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
+      } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
+      //横幅をcanvasSizeにする
+      let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
+      ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
+      imgSize.width = WIDTH; 
+      imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-    } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
-      let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
-      ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
-      imgSize.width = fixedWidth;
-      imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
+      } else {//どれでもなければ縦幅をcanvasSizeにする
+        let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
+        ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
+        imgSize.width = fixedWidth;
+        imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
+      }
+    }
+    if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
+      imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+      imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
     }
     colorReduction();
   }
@@ -150,7 +177,8 @@ function colorReduction(){//減色処理
 }
 function makeOutputJasmine(){
   outputJasmine.value = procedure + `
-call printPic ${startX.value},${startY.value},${startPicNum.value}
+call printBackground ${startPicNum.value},1
+background 1
 end`;
   outputArea.value = outputJasmine.value;
   navigator.clipboard.writeText(outputJasmine.value)
@@ -170,14 +198,30 @@ function textareaOnClick(){
   <label>
     配置するy座標
     <input type="number" v-model="startY"/>
-  </label><br/>
+  </label><br/><br/>
+  <label>
+    画面の縦横幅を指定
+    <input type="checkbox" v-model="useInputWH">
+  </label>
+  <div v-if="useInputWH">
+    <label>
+      画像の横幅
+      <input type="number" v-model="inputW"/>
+    </label>
+    <label>
+      画像の縦幅
+      <input type="number" v-model="inputH"/>
+    </label>
+  </div>
+  <br/>
   <label>
     PIC パターン番号の開始位置
     <input type="number" v-model="startPicNum">
   </label>
   <br/><br/>
-  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
-  <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas><br/>
+  <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/><br/>
+  <button @click="drawImage" v-if="isImageLoaded">実行！</button><br/>
+  <canvas id="canvas" :width="WIDTH" :height="HEIGHT"></canvas><br/>
   <textarea id="outputArea" rows="25" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
 </template>
 
