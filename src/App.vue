@@ -108,6 +108,11 @@ function loadLocalImage(e) {
   reader.readAsDataURL(fileData);
 }
 function drawImage(){
+  if(startX.value == '') startX.value = 0; //inputの例外対策
+  if(startY.value == '') startY.value = 0;
+  if(inputW.value == '') inputW.value = WIDTH;
+  if(inputH.value == '') inputH.value = HEIGHT;
+
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
   // Canvas上に画像を表示
