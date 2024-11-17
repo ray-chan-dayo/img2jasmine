@@ -110,6 +110,7 @@ function loadLocalImage(e) {
 function drawImage(){
   procedure = undefined;//出力を初期化
   outputArea.value = "";
+  colorIndexMap = [];
 
   if(startX.value == '') startX.value = 0; //inputの例外対策
   if(startY.value == '') startY.value = 0;
