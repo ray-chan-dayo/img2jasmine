@@ -108,6 +108,9 @@ function loadLocalImage(e) {
   reader.readAsDataURL(fileData);
 }
 function drawImage(){
+  procedure = undefined;//出力を初期化
+  outputArea.value = "";
+
   if(startX.value == '') startX.value = 0; //inputの例外対策
   if(startY.value == '') startY.value = 0;
   if(inputW.value == '') inputW.value = WIDTH;
@@ -150,8 +153,8 @@ function drawImage(){
       }
     }
     if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
-      imgSize.width = Math.min(imgSize.width + startX.value, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
-      imgSize.height = Math.min(imgSize.height + startY.value, 400);
+      imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+      imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
     }
     colorReduction();
   }
