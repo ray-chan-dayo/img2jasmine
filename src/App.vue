@@ -117,7 +117,7 @@ function drawImage(){
     imgSize.width = img.naturalWidth
     imgSize.height = img.naturalHeight
     if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
-      ctx.drawImage(img, startX, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
+      ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
       imgSize.width = inputW.value;
       imgSize.height = inputH.value;
 
@@ -128,25 +128,25 @@ function drawImage(){
         alert("画像サイズが0x0です")
       }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
         //そのまま描画する
-        ctx.drawImage(img, startX, startY.value, img.naturalWidth, img.naturalHeight)
+        ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
 
-      } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
-      //横幅を固定して縦幅を調節する
-      let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
-      ctx.drawImage(img, startX, startY.value, WIDTH, fixedHeight)
-      imgSize.width = WIDTH; 
+      } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
+      //横幅をcanvasSizeにする
+      let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
+      ctx.drawImage(img, startX.value, startY.value, canvasSize.width, fixedHeight)
+      imgSize.width = canvasSize.width; 
       imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-      } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
-        let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
-        ctx.drawImage(img, startX, startY.value, fixedWidth, HEIGHT)
+      } else {//どれでもなければ縦幅をcanvasSizeにする
+        let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
+        ctx.drawImage(img, startX.value, startY.value, fixedWidth, canvasSize.height)
         imgSize.width = fixedWidth;
         imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
       }
     }
-    if(startX>0 || startY.value>0){ //配置座標が変更されていたら
-      imgSize.width = Math.min(imgSize.width + startX, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
-      imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
+    if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
+      imgSize.width = Math.min(imgSize.width + startX, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+      imgSize.height = Math.min(imgSize.height + startY, 400);
     }
     colorReduction();
   }
