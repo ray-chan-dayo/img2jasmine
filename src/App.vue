@@ -3,8 +3,9 @@ import { onMounted, ref, watch} from 'vue'
 import { colorPalette, extendPalette } from './libs/colorPalette';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
-const canvasSize = { width: 640, height: 400 }
 const imgSize = {width: 0, height: 0 }
+const WIDTH = 640
+const HEIGHT = 400
 
 const uploadImgSrc = ref()
 
@@ -17,6 +18,8 @@ let ctx;
 let outputArea;
 
 let procedure;
+
+const isImageLoaded = ref(false);
 
 const startX = ref(0);
 const startY = ref(0);
@@ -76,12 +79,11 @@ onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d",{ willReadFrequently: true });
   outputArea = document.getElementById("outputArea")
-
-  watch(startX, () =>{if(procedure)makeOutputJasmine()});
-  watch(startY, () =>{if(procedure)makeOutputJasmine()});
 })
 
 function loadLocalImage(e) {
+  isImageLoaded.value = false;
+
   console.log("loadLocalImage")
   //色コード配列を初期化
   colorIndexMap = []
@@ -98,16 +100,15 @@ function loadLocalImage(e) {
   const reader = new FileReader();
   // ファイル読み込みに成功したときの処理
   reader.onload = function() {
-    // uploadImgSrcはwatchで監視されているので、canvasにdrawされる
     uploadImgSrc.value = reader.result;
-    drawImage()
-    console.log(uploadImgSrc)
+    console.log(uploadImgSrc.value);
+    isImageLoaded.value = true;
   }
   // ファイル読み込みを実行
   reader.readAsDataURL(fileData);
 }
 function drawImage(){
-  ctx.clearRect(0, 0, canvasSize.width, canvasSize.height);
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
   // Canvas上に画像を表示
   var img = new Image()
@@ -116,31 +117,36 @@ function drawImage(){
     imgSize.width = img.naturalWidth
     imgSize.height = img.naturalHeight
     if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
-      ctx.drawImage(img, 0, 0, inputW.value, inputH.value);//ユーザー様の仰せのままに
+      ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
       imgSize.width = inputW.value;
       imgSize.height = inputH.value;
+
     } else {
       //特にユーザーの指定がなければこっちでごちゃごちゃする
-      if(imgSize.width == 0||imgSize.height == 0){
+      if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
         //なにもしない
-
-      }else if(imgSize.width<=canvasSize.width && imgSize.height<=canvasSize.height){//入ってきた画像がcanvasSize以下の大きさなら
+        alert("画像サイズが0x0です")
+      }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
         //そのまま描画する
-        ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight)
+        ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
 
-      } else if (Math.round(canvasSize.width / imgSize.width * imgSize.height) <= canvasSize.height) {//縦幅がcanvasの範囲に収まったら
-      //横幅を固定して縦幅を調節する
-      let fixedHeight = Math.round(canvasSize.width / imgSize.width * imgSize.height)
-      ctx.drawImage(img, 0, 0, canvasSize.width, fixedHeight)
-      imgSize.width = canvasSize.width; 
+      } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
+      //横幅をcanvasSizeにする
+      let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
+      ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
+      imgSize.width = WIDTH; 
       imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-      } else {//どれでもなければ縦幅を縮めなきゃなのでそうする
-        let fixedWidth = Math.round(canvasSize.height / imgSize.height * imgSize.width)
-        ctx.drawImage(img, 0, 0, fixedWidth, canvasSize.height)
+      } else {//どれでもなければ縦幅をcanvasSizeにする
+        let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
+        ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
         imgSize.width = fixedWidth;
-        imgSize.height = canvasSize.height; //imgSizeをcanvasSizeに合わせて変更する
+        imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
       }
+    }
+    if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
+      imgSize.width = Math.min(imgSize.width + startX, 640);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+      imgSize.height = Math.min(imgSize.height + startY, 400);
     }
     colorReduction();
   }
@@ -205,7 +211,8 @@ function textareaOnClick(){
   </label>
   <br/><br/>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/>
-  <canvas id="canvas" :width="canvasSize.width" :height="canvasSize.height"></canvas><br/>
+  <button @click="drawImage" v-if="isImageLoaded">実行！</button>
+  <canvas id="canvas" :width="WIDTH" :height="HEIGHT"></canvas><br/>
   <textarea id="outputArea" rows="25" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
 </template>
 
