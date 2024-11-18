@@ -158,7 +158,7 @@ function drawAsSprite(img){
 function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
-      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y, oPALETTE);
+      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y, isBackgroundMode ? exPALETTE : oPALETTE);//最後の引数を三項演算子で切り替える
       colorIndexMap.push(reducedColorIndex)
       if (reducedColorIndex == -1) reducedColorIndex = 38;
       ctx.fillStyle = `rgba(${originalPalette[reducedColorIndex][0]}, ${originalPalette[reducedColorIndex][1]}, ${originalPalette[reducedColorIndex][2]}, ${originalPalette[reducedColorIndex][3]})`;
