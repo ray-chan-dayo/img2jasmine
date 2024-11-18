@@ -91,7 +91,7 @@ function drawAsBackground(img){
   if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
     ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
     imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
-    imgSize.height = Math.min(inputH.value, HEIGHT);
+    imgSize.height = Math.min(inputH.value, HEIGHT);// はみ出した分はクリッピングしたいのでここでWidthとHeightを変えてる
   } else {
     //特にユーザーの指定がなければこっちでごちゃごちゃする
     if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
@@ -125,7 +125,7 @@ function drawAsSprite(img){
   if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
     ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
     imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
-    imgSize.height = Math.min(inputH.value, HEIGHT);
+    imgSize.height = Math.min(inputH.value, HEIGHT); 
   } else {
     //特にユーザーの指定がなければこっちでごちゃごちゃする
     if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
@@ -136,11 +136,11 @@ function drawAsSprite(img){
       ctx.drawImage(img, Math.round((WIDTH - img.naturalWidth) / 2), Math.round((HEIGHT - img.naturalHeight) / 2), img.naturalWidth, img.naturalHeight)
 
     } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
-    //横幅をcanvasSizeにする
-    let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
-    ctx.drawImage(img, 0, Math.round((HEIGHT - fixedHeight)) / 2, WIDTH, fixedHeight) //Y座標を真ん中になるように描画するよ
-    imgSize.width = WIDTH; 
-    imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
+      //横幅をcanvasSizeにする
+      let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
+      ctx.drawImage(img, 0, Math.round((HEIGHT - fixedHeight)) / 2, WIDTH, fixedHeight) //Y座標を真ん中になるように描画するよ
+      imgSize.width = WIDTH; 
+      imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
     } else {//どれでもなければ縦幅をcanvasSizeにする
       let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
@@ -149,10 +149,8 @@ function drawAsSprite(img){
       imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
     }
   }
-  if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
-    imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
-    imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
-  }
+  imgSize.width = WIDTH;
+  imgSize.height = HEIGHT;// 結局32*32にするのでimgSizeをここで32*32にしちゃう
   colorReduction();
 }
 function colorReduction(){//減色処理
@@ -195,6 +193,7 @@ function changeMode(e){
     HEIGHT = 32;
     startPicNum.value = 0
   }
+  console.log(WIDTH, HEIGHT)
 }
 </script>
 
