@@ -127,8 +127,8 @@ function drawImage(){
     imgSize.height = img.naturalHeight
     if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
       ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
-      imgSize.width = inputW.value;
-      imgSize.height = inputH.value;
+      imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
+      imgSize.height = Math.min(inputH.value, HEIGHT);
 
     } else {
       //特にユーザーの指定がなければこっちでごちゃごちゃする
@@ -210,7 +210,7 @@ function textareaOnClick(){
     </label>
     <label>
       画像の縦幅
-      <input type="number" v-model="inputH"/>
+      <input type="number" v-model="inputH" />
     </label>
   </div>
   <br/>
