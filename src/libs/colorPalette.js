@@ -1,4 +1,5 @@
 // import { colorPalette } from "./libs/colorPalette.js"
+
 export function colorPalette(originalColor, exPalette, x, y) {
     let result;
     // originalColor = [255,255,255]; //[r,g,b]

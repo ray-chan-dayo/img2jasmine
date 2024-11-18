@@ -3,21 +3,11 @@ import { onMounted, ref, watch} from 'vue'
 import { colorPalette, extendPalette } from './libs/colorPalette';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
+import { palette, WIDTH, HEIGHT } from './libs/defineConstants';
+
 const imgSize = {width: 0, height: 0 }
-const WIDTH = 640
-const HEIGHT = 400
 
 const uploadImgSrc = ref()
-
-const size = 16;
-
-let colorIndexMap = []
-
-let canvas;
-let ctx;
-let outputArea;
-
-let procedure;
 
 const isImageLoaded = ref(false);
 
@@ -32,48 +22,15 @@ const startPicNum = ref(100);
 
 const outputJasmine = ref();
 
-const palette = [
-  [0, 0, 0, 255],
-  [0, 0, 255, 255],
-  [255, 0, 0, 255],
-  [255, 0, 255, 255],
-  [0, 255, 0, 255],
-  [0, 255, 255, 255],
-  [255, 255, 0, 255],
-  [255, 255, 255, 255],
-  [119, 119, 119, 255],
-  [0, 0, 163, 255],
-  [109, 18, 10, 255],
-  [156, 31, 164, 255],
-  [76, 167, 48, 255],
-  [76, 167, 169, 255],
-  [170, 170, 53, 255],
-  [170, 170, 170, 255],
-  [89, 128, 162, 255],
-  [75, 61, 60, 255],
-  [88, 98, 201, 255],
-  [106, 162, 247, 255],
-  [113, 164, 86, 255],
-  [145, 208, 206, 255],
-  [156, 216, 251, 255],
-  [138, 131, 129, 255],
-  [133, 80, 81, 255],
-  [148, 129, 241, 255],
-  [154, 114, 140, 255],
-  [168, 149, 127, 255],
-  [197, 192, 192, 255],
-  [207, 217, 89, 255],
-  [207, 192, 164, 255],
-  [225, 150, 68, 255],
-  [224, 119, 179, 255],
-  [227, 96, 74, 255],
-  [235, 161, 158, 255],
-  [246, 233, 218, 255],
-  [243, 207, 102, 255],
-  [248, 233, 87, 255],
-  [0, 0, 0, 0]
-]
 const extendedPalette = extendPalette(palette)
+
+let colorIndexMap = []
+
+let canvas;
+let ctx;
+let outputArea;
+
+let procedure;
 
 onMounted(()=>{
   canvas = document.getElementById("canvas");
