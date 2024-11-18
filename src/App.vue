@@ -1,15 +1,30 @@
 <script setup>
-import { onMounted, ref, watch} from 'vue'
-import { colorPalette, extendPalette } from './libs/colorPalette';
+import { onMounted, ref, watch } from 'vue'
+import { translateColor } from './libs/traslateColor';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
+import { originalPalette } from './libs/defineConstants';
+
 const imgSize = {width: 0, height: 0 }
-const WIDTH = 640
-const HEIGHT = 400
+let WIDTH = 640;
+let HEIGHT = 400;
 
-const uploadImgSrc = ref()
+const uploadImgSrc = ref();
 
-const size = 16;
+const isImageLoaded = ref(false);
+
+const startX = ref(0);
+const startY = ref(0);
+
+let isBackgroundMode = true;
+
+const useInput = ref(false);
+const inputW = ref(640);
+const inputH = ref(400);
+
+const startPicNum = ref(100);
+
+const outputJasmine = ref();
 
 let colorIndexMap = []
 
@@ -19,74 +34,18 @@ let outputArea;
 
 let procedure;
 
-const isImageLoaded = ref(false);
-
-const startX = ref(0);
-const startY = ref(0);
-
-const useInputWH = ref(false);
-const inputW = ref(640);
-const inputH = ref(400);
-
-const startPicNum = ref(100);
-
-const outputJasmine = ref();
-
-const palette = [
-  [0, 0, 0, 255],
-  [0, 0, 255, 255],
-  [255, 0, 0, 255],
-  [255, 0, 255, 255],
-  [0, 255, 0, 255],
-  [0, 255, 255, 255],
-  [255, 255, 0, 255],
-  [255, 255, 255, 255],
-  [119, 119, 119, 255],
-  [0, 0, 163, 255],
-  [109, 18, 10, 255],
-  [156, 31, 164, 255],
-  [76, 167, 48, 255],
-  [76, 167, 169, 255],
-  [170, 170, 53, 255],
-  [170, 170, 170, 255],
-  [89, 128, 162, 255],
-  [75, 61, 60, 255],
-  [88, 98, 201, 255],
-  [106, 162, 247, 255],
-  [113, 164, 86, 255],
-  [145, 208, 206, 255],
-  [156, 216, 251, 255],
-  [138, 131, 129, 255],
-  [133, 80, 81, 255],
-  [148, 129, 241, 255],
-  [154, 114, 140, 255],
-  [168, 149, 127, 255],
-  [197, 192, 192, 255],
-  [207, 217, 89, 255],
-  [207, 192, 164, 255],
-  [225, 150, 68, 255],
-  [224, 119, 179, 255],
-  [227, 96, 74, 255],
-  [235, 161, 158, 255],
-  [246, 233, 218, 255],
-  [243, 207, 102, 255],
-  [248, 233, 87, 255],
-  [0, 0, 0, 0]
-]
-const extendedPalette = extendPalette(palette)
-
 onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d",{ willReadFrequently: true });
-  outputArea = document.getElementById("outputArea")
-})
+  outputArea = document.getElementById("outputArea");
+});
 
 function loadLocalImage(e) {
   isImageLoaded.value = false;
 
-  console.log("loadLocalImage")
+  console.log("loadLocalImage");
   //色コード配列を初期化
-  colorIndexMap = []
+  colorIndexMap = [];
   // ファイル情報を取得
   const fileData = e.target.files[0];
 
@@ -94,7 +53,7 @@ function loadLocalImage(e) {
   if(!fileData.type.match('image.*')) {
     alert('画像を選択してください');
     return;
-  }
+  };
 
   // FileReaderオブジェクトを使ってファイル読み込み
   const reader = new FileReader();
@@ -125,53 +84,89 @@ function drawImage(){
   img.onload = () => {
     imgSize.width = img.naturalWidth
     imgSize.height = img.naturalHeight
-    if(useInputWH.value){//ユーザーがwidthとheightを指定してた場合
-      ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
-      imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
-      imgSize.height = Math.min(inputH.value, HEIGHT);
+    isBackgroundMode ? drawAsBackground(img) : drawAsSprite(img);//モードによって描画方法を変える
+  }
+}
+function drawAsBackground(img){
+  console.log("drawAsBackground");
+  if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
+    ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
+    imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
+    imgSize.height = Math.min(inputH.value, HEIGHT);// はみ出した分はクリッピングしたいのでここでWidthとHeightを変えてる
+  } else {
+    //特にユーザーの指定がなければこっちでごちゃごちゃする
+    if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
+      //なにもしない
+      alert("画像サイズが0x0です")
+    }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
+      //そのまま描画する
+      ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
 
-    } else {
-      //特にユーザーの指定がなければこっちでごちゃごちゃする
-      if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
-        //なにもしない
-        alert("画像サイズが0x0です")
-      }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
-        //そのまま描画する
-        ctx.drawImage(img, startX.value, startY.value, img.naturalWidth, img.naturalHeight)
+    } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
+    //横幅をcanvasSizeにする
+    let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
+    ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
+    imgSize.width = WIDTH; 
+    imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-      } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
+    } else {//どれでもなければ縦幅をcanvasSizeにする
+      let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
+      ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
+      imgSize.width = fixedWidth;
+      imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
+    }
+  }
+  if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
+    imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
+    imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
+  }
+  colorReduction();
+}
+function drawAsSprite(img){
+  console.log("drawAsSprite")
+  if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
+    ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
+    imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
+    imgSize.height = Math.min(inputH.value, HEIGHT); 
+  } else {
+    //特にユーザーの指定がなければこっちでごちゃごちゃする
+    if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
+      //なにもしない
+      alert("画像サイズが0x0です")
+    }else if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){//入ってきた画像がcanvasSize以下の大きさなら
+      //そのまま描画する
+      ctx.drawImage(img, Math.round((WIDTH - img.naturalWidth) / 2), Math.round((HEIGHT - img.naturalHeight) / 2), img.naturalWidth, img.naturalHeight)
+
+    } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
       //横幅をcanvasSizeにする
       let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
-      ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
+      ctx.drawImage(img, 0, Math.round((HEIGHT - fixedHeight)) / 2, WIDTH, fixedHeight) //Y座標を真ん中になるように描画するよ
       imgSize.width = WIDTH; 
       imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
-      } else {//どれでもなければ縦幅をcanvasSizeにする
-        let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
-        ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
-        imgSize.width = fixedWidth;
-        imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
-      }
+    } else {//どれでもなければ縦幅をcanvasSizeにする
+      let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
+      ctx.drawImage(img, Math.round((WIDTH - fixedWidth) / 2), 0, fixedWidth, HEIGHT) //X座標を真ん中になるように描画するよ
+      imgSize.width = fixedWidth;
+      imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
     }
-    if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
-      imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
-      imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
-    }
-    colorReduction();
   }
+  imgSize.width = WIDTH;
+  imgSize.height = HEIGHT;// 結局32*32にするのでimgSizeをここで32*32にしちゃう
+  colorReduction();
 }
 function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
-      let reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, extendedPalette, x, y);
+      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y);
       colorIndexMap.push(reducedColorIndex)
       if (reducedColorIndex == -1) reducedColorIndex = 38;
-      ctx.fillStyle = `rgba(${palette[reducedColorIndex][0]}, ${palette[reducedColorIndex][1]}, ${palette[reducedColorIndex][2]}, ${palette[reducedColorIndex][3]})`;
+      ctx.fillStyle = `rgba(${originalPalette[reducedColorIndex][0]}, ${originalPalette[reducedColorIndex][1]}, ${originalPalette[reducedColorIndex][2]}, ${originalPalette[reducedColorIndex][3]})`;
       ctx.fillRect(x,y,1,1);
-    }
-  }
+    };
+  };
   procedure = exportAsJasmine(
-    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, size)
+    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height)
   )
   makeOutputJasmine()
 }
@@ -181,29 +176,50 @@ call printBackground ${startPicNum.value},1
 background 1
 end`;
   outputArea.value = outputJasmine.value;
-  navigator.clipboard.writeText(outputJasmine.value)
+  navigator.clipboard.writeText(outputJasmine.value);
 }
 
 function textareaOnClick(){
   outputArea.select();
   navigator.clipboard.writeText(outputJasmine.value)
 }
+
+function changeMode(e){
+  isBackgroundMode = e.target.value == 'background';
+  if(isBackgroundMode){//背景モードのときのサイズ
+    WIDTH = 640;
+    HEIGHT = 400;
+    startPicNum.value = 100
+  } else {//スプライトモードのときのサイズ
+    WIDTH = 32;
+    HEIGHT = 32;
+    startPicNum.value = 0
+  }
+  console.log(WIDTH, HEIGHT)
+}
 </script>
 
 <template>
+  <div>
+    <form id="selectMode" @change="changeMode">
+      <label><input type="radio" name="selectedMode" value="background" checked>背景モード</label>
+      <label><input type="radio" name="selectedMode" value="sprite">スプライトモード</label>
+    </form>
+  </div><br/>
   <label>
-    配置するx座標
-    <input type="number" v-model="startX"/>
+    画像の配置座標、縦横幅を指定
+    <input type="checkbox" v-model="useInput">
   </label>
-  <label>
-    配置するy座標
-    <input type="number" v-model="startY"/>
-  </label><br/><br/>
-  <label>
-    画面の縦横幅を指定
-    <input type="checkbox" v-model="useInputWH">
-  </label>
-  <div v-if="useInputWH">
+  <div v-if="useInput">
+    <p>Jasmine teaの画面サイズ : 横640px×縦400px</p>
+    <label>
+      配置するx座標
+      <input type="number" v-model="startX"/>
+    </label>
+    <label>
+      配置するy座標
+      <input type="number" v-model="startY"/>
+    </label><br/><br/>
     <label>
       画像の横幅
       <input type="number" v-model="inputW"/>
