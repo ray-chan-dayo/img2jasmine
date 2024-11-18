@@ -16,7 +16,7 @@ const isImageLoaded = ref(false);
 const startX = ref(0);
 const startY = ref(0);
 
-let isBackgroundMode = false;
+let isBackgroundMode = true;
 
 const useInput = ref(false);
 const inputW = ref(640);
@@ -88,6 +88,7 @@ function drawImage(){
   }
 }
 function drawAsBackground(img){
+  console.log("drawAsBackground");
   if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
     ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
     imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
@@ -122,6 +123,7 @@ function drawAsBackground(img){
   colorReduction();
 }
 function drawAsSprite(img){
+  console.log("drawAsSprite")
   if(useInput.value){//ユーザーが座標とか幅とか指定してた場合
     ctx.drawImage(img, startX.value, startY.value, inputW.value, inputH.value);//ユーザー様の仰せのままに
     imgSize.width = Math.min(inputW.value, WIDTH); //ユーザーが入力した幅の値が画面サイズを超えてたら画面サイズ以上の幅をimgSizeに入れないようにする
