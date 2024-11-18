@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref, watch} from 'vue'
-import { colorPalette, extendPalette } from './libs/colorPalette';
+import { onMounted, ref, watch } from 'vue'
+import { translateColor } from './libs/traslateColor';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
-import { palette, WIDTH, HEIGHT } from './libs/defineConstants';
+import { WIDTH, HEIGHT, originalPalette } from './libs/defineConstants';
 
 const imgSize = {width: 0, height: 0 }
 
@@ -21,8 +21,6 @@ const inputH = ref(400);
 const startPicNum = ref(100);
 
 const outputJasmine = ref();
-
-const extendedPalette = extendPalette(palette)
 
 let colorIndexMap = []
 
@@ -120,15 +118,15 @@ function drawImage(){
 function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
-      let reducedColorIndex = colorPalette(ctx.getImageData(x,y,1,1).data, extendedPalette, x, y);
+      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y);
       colorIndexMap.push(reducedColorIndex)
       if (reducedColorIndex == -1) reducedColorIndex = 38;
-      ctx.fillStyle = `rgba(${palette[reducedColorIndex][0]}, ${palette[reducedColorIndex][1]}, ${palette[reducedColorIndex][2]}, ${palette[reducedColorIndex][3]})`;
+      ctx.fillStyle = `rgba(${originalPalette[reducedColorIndex][0]}, ${originalPalette[reducedColorIndex][1]}, ${originalPalette[reducedColorIndex][2]}, ${originalPalette[reducedColorIndex][3]})`;
       ctx.fillRect(x,y,1,1);
     }
   }
   procedure = exportAsJasmine(
-    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height, size)
+    splitImageSquare(colorIndexMap, imgSize.width, imgSize.height)
   )
   makeOutputJasmine()
 }

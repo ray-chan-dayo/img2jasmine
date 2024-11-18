@@ -1,4 +1,4 @@
-export const palette = [
+export const originalPalette = [
     [0, 0, 0, 255],
     [0, 0, 255, 255],
     [255, 0, 0, 255],
@@ -43,3 +43,52 @@ export const palette = [
 export const WIDTH = 640,
              HEIGHT = 400,
              SIZE = 16
+
+export const PALETTE = (()=>{
+  const paletteSize = originalPalette.length;
+  const extendedPalette = new Array((paletteSize + paletteSize ** 2)/2);
+  let k = 0;
+  for (let i = 0; i < originalPalette.length; i++) {
+    for (let j = i; j < originalPalette.length; j++) {
+      const resultColor = [
+        (originalPalette[i][0] + originalPalette[j][0]) / 2,
+        (originalPalette[i][1] + originalPalette[j][1]) / 2,
+        (originalPalette[i][2] + originalPalette[j][2]) / 2
+      ]
+      const distance = 
+      (originalPalette[i][0] - originalPalette[j][0]) ** 2 +
+      (originalPalette[i][1] - originalPalette[j][1]) ** 2 +
+      (originalPalette[i][2] - originalPalette[j][2]) ** 2
+      extendedPalette[k] = {
+        color: resultColor,
+        src1: i,
+        src2: j,
+        ratio: 1,
+        distance: distance
+      }
+      k++
+    }
+  }
+  for (let i = 0; i < originalPalette.length; i++) {
+    for (let j = 0; j < originalPalette.length; j++) {
+      const resultColor = [
+        (originalPalette[i][0] * 3 + originalPalette[j][0]) / 4,
+        (originalPalette[i][1] * 3 + originalPalette[j][1]) / 4,
+        (originalPalette[i][2] * 3 + originalPalette[j][2]) / 4
+      ]
+      const distance = 
+      (originalPalette[i][0] - originalPalette[j][0]) ** 2 +
+      (originalPalette[i][1] - originalPalette[j][1]) ** 2 +
+      (originalPalette[i][2] - originalPalette[j][2]) ** 2
+      extendedPalette[k] = {
+        color: resultColor,
+        src1: i,
+        src2: j,
+        ratio: 2,
+        distance: distance
+      }
+      k++
+    }
+  }
+  return extendedPalette
+})()
