@@ -1,16 +1,15 @@
-import { PALETTE, WIDTH, HEIGHT } from "./defineConstants";
+import { WIDTH, HEIGHT } from "./defineConstants";
 import { isColor, isUint } from "./isColor";
 
 // import { translateColor } from "./libs/translateColor.js"
-export function translateColor(originalColor, x, y) {
+export function translateColor(originalColor, x, y, PALETTE) {
     let result;
     // originalColor = [255,255,255]; //[r,g,b]
     // エラー処理
     if (!isColor(originalColor)) console.error(`Invalid arguments passed to function colorPalette(): originalColor is not a color. (${originalColor})`);
     if ( !isUint(x) || WIDTH < x ) console.error(`Invalid arguments passed to function colorPalette(): x (${x})`);
     if ( !isUint(y) || HEIGHT < y ) console.error(`Invalid arguments passed to function colorPalette(): y (${y})`);
-    // 195076 = 255 * 255(ff-00^2) * 3(rgb) + 1;
-    let leastDiff = 195076;
+    let leastDiff = Infinity;
     // 透明の場合はcut
     if (originalColor[3] == 0) {
         result = -1;
