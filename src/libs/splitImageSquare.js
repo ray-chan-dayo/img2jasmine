@@ -5,6 +5,7 @@ export function splitImageSquare(colorMap, width, height) {
     if (!isUint(width) || WIDTH < width ) console.error(`Invalid arguments passed to function splitImageSquare(): width (${width})`);
     if (!isUint(height) || HEIGHT < height ) console.error(`Invalid arguments passed to function splitImageSquare(): height (${height})`);
     if (!colorMap) console.error(`Invalid arguments passed to function splitImageSquare(): colorMap (${colorMap})`);
+    
     const horizontalTiles = Math.ceil(width / SIZE);
     const verticalTiles = Math.ceil(height / SIZE);
 

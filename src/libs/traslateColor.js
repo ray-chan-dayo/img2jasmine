@@ -1,7 +1,7 @@
 import { PALETTE, WIDTH, HEIGHT } from "./defineConstants";
 import { isColor, isUint } from "./isColor";
 
-// import { translateColor } from "./libs/colorPalette.js"
+// import { translateColor } from "./libs/translateColor.js"
 export function translateColor(originalColor, x, y) {
     let result;
     // originalColor = [255,255,255]; //[r,g,b]
