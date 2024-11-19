@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { translateColor } from './libs/traslateColor';
 import { splitImageSquare } from './libs/splitImageSquare';
 import { exportAsJasmine } from './libs/exportasjasmine';
-import { originalPalette, exPALETTE, oPALETTE } from './libs/defineConstants';
+import { originalPalette, ex4PALETTE, oPALETTE } from './libs/defineConstants';
 
 const imgSize = {width: 0, height: 0 }
 let WIDTH = 640;
@@ -158,7 +158,7 @@ function drawAsSprite(img){
 function colorReduction(){//減色処理
   for(let y=0; y<imgSize.height; y++){
     for(let x=0; x<imgSize.width; x++){
-      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y, isBackgroundMode ? exPALETTE : oPALETTE);//最後の引数を三項演算子で切り替える
+      let reducedColorIndex = translateColor(ctx.getImageData(x,y,1,1).data, x, y, isBackgroundMode ? ex4PALETTE : oPALETTE);//最後の引数を三項演算子で切り替える
       colorIndexMap.push(reducedColorIndex)
       if (reducedColorIndex == -1) reducedColorIndex = 38;
       ctx.fillStyle = `rgba(${originalPalette[reducedColorIndex][0]}, ${originalPalette[reducedColorIndex][1]}, ${originalPalette[reducedColorIndex][2]}, ${originalPalette[reducedColorIndex][3]})`;

@@ -44,7 +44,8 @@ export const WIDTH = 640,
              HEIGHT = 400,
              SIZE = 16
 
-export const exPALETTE = (()=>{
+// うごメモパレット
+export const ex4PALETTE = (()=>{
     const paletteSize = originalPalette.length;
     const extendedPalette = new Array((paletteSize + paletteSize ** 2)/2);
     let k = 0;
@@ -95,6 +96,36 @@ export const exPALETTE = (()=>{
     return extendedPalette
 })()
 
+// チェッカーパレット
+export const ex2PALETTE = (()=>{
+    const paletteSize = originalPalette.length;
+    const extendedPalette = new Array((paletteSize + paletteSize ** 2)/2);
+    let k = 0;
+    for (let i = 0; i < originalPalette.length; i++) {
+      for (let j = i; j < originalPalette.length; j++) {
+        const resultColor = [
+            (originalPalette[i][0] + originalPalette[j][0]) / 2,
+            (originalPalette[i][1] + originalPalette[j][1]) / 2,
+            (originalPalette[i][2] + originalPalette[j][2]) / 2
+        ]
+        const distance = 
+        (originalPalette[i][0] - originalPalette[j][0]) ** 2 +
+        (originalPalette[i][1] - originalPalette[j][1]) ** 2 +
+        (originalPalette[i][2] - originalPalette[j][2]) ** 2
+        extendedPalette[k] = {
+            color: resultColor,
+            src1: i,
+            src2: j,
+            ratio: 1,
+            distance: distance
+        }
+        k++
+      }
+    }
+    return extendedPalette
+})()
+
+// 単色パレット
 export const oPALETTE = (()=>{
     const paletteSize = originalPalette.length;
     const newPalette = new Array(paletteSize);
@@ -105,7 +136,7 @@ export const oPALETTE = (()=>{
             color: originalPalette[i],
             src1: i,
             src2: i,
-            ratio: 0,
+            ratio: 1,
             distance: 0
         }
     }
