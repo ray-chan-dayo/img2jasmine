@@ -1,0 +1,11 @@
+function loadPic@
+r@=[]
+read r@[0]
+if r@[0] = -2 then
+read i
+r[1]=i
+else
+for i=1 to 255
+read r@[i]
+return r
+end function

@@ -18,42 +18,35 @@ export function exportAsJasmine(splittedImg) {
     splittedImg = result.join("\n  data ")
 
 return `// Pic番号をstartPicNum+1000番まで上書きします。
-procedure printBackground startPicNum,backgroundNum
-  let w = ${w}
-  let h = ${h}
-  let blank@ = []
-  let picNumLs@ = []
-  // blankのpicパターンを定義
+function loadBackground@ startPicNum,backgroundNum,w,h
+  s=startPicNum
+  b=s+1000
+  t@=[]
+  r@=[]
+  //blankのpicパターンを定義
   for i=0 to 255
-    blank@[i] = -1
+    t@[i] = -1
   next
-  def pic startPicNum+1000,blank@
-
-  let picNum = startPicNum
+  def pic b,t@
+  let i = s
   for y=0 to 24
-    for x=0 to 39
-      let pic@=[]
-      if x<w AND y<h then
-        // readData
-        read pic@[0]
-        if pic@[0] = -2 then
-          read reffingIndex
-          picNumLs@[x+y*40] = reffingIndex + startPicNum
-        else
-          for i=1 to 255
-            read pic@[i]
-          next
-          def pic picNum,pic@
-          picNumLs@[x+y*40] = picNum
-        end if
-          picNum = picNum + 1
+  for x=0 to 39
+    if x<w AND y<h then
+      t@ = loadPic@()
+      if t@[0]=-2 then
+        r@[x+y*40]=t@[1]+s
       else
-        // blank
-        picNumLs@[x+y*40] = startPicNum + 1000
+        r@[x+y*40] = i
       end if
-    next
+      i=i+1
+    else
+      r@[x+y*40]=b
+    end if
   next
-  def background backgroundNum,picNumLs@,-1
-  data ${splittedImg}
+  next
 end procedure`
++
+`
+data ${splittedImg}`
 }
+export function exportAsJasmine(splittedImg) {}
