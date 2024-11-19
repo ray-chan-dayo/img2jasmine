@@ -212,7 +212,7 @@ function changeMode(e){
   </label>
   <div v-if="useInput">
     <p v-if="isBackgroundMode">Jasmine teaの画面サイズ : 横640px×縦400px</p>
-    <p v-else>スプライトのサイズ : 横32px×縦32px</p>>
+    <p v-else>スプライトのサイズ : 横32px×縦32px</p>
     <label>
       配置するx座標
       <input type="number" v-model="startX"/>
