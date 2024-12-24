@@ -17,6 +17,7 @@ const startX = ref(0);
 const startY = ref(0);
 
 let isBackgroundMode = true;
+const alignMode = ref("left");
 
 const useInput = ref(false);
 const inputW = ref(640);
@@ -95,6 +96,28 @@ function drawAsBackground(img){
     imgSize.height = Math.min(inputH.value, HEIGHT);// はみ出した分はクリッピングしたいのでここでWidthとHeightを変えてる
   } else {
     //特にユーザーの指定がなければこっちでごちゃごちゃする
+    let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height);//横幅をcanvasSizeに合わせるときに縦横比を合わせるための辻褄合わせ縦幅
+    let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width);//縦幅をcanvasSizeに合わせるときに縦横比を合わせるための辻褄合わせ横幅
+
+    switch(alignMode.value){//まず、左寄せ右寄せ中央寄せなどの調整をする
+      case 'left':
+        startX.value = 0;
+        break;
+      case 'center':
+        if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){
+          startX.value = Math.round((WIDTH - img.naturalWidth) / 2)
+        } else {
+          startX.value = Math.round((WIDTH - fixedWidth) / 2)
+        }
+        break;
+      case 'right':
+        if(imgSize.width<=WIDTH && imgSize.height<=HEIGHT){
+          startX.value = WIDTH - img.naturalWidth;
+        } else {
+          startX.value = WIDTH - fixedWidth;
+        }
+      break;
+    }
     if(imgSize.width == 0||imgSize.height == 0){ //画像サイズが0*0なら
       //なにもしない
       alert("画像サイズが0x0です")
@@ -104,19 +127,17 @@ function drawAsBackground(img){
 
     } else if (Math.round(WIDTH / imgSize.width * imgSize.height) <= HEIGHT) {//縦幅がcanvasの範囲に収まったら
     //横幅をcanvasSizeにする
-    let fixedHeight = Math.round(WIDTH / imgSize.width * imgSize.height)
     ctx.drawImage(img, startX.value, startY.value, WIDTH, fixedHeight)
     imgSize.width = WIDTH; 
     imgSize.height = fixedHeight; //imgSizeをcanvasSizeに合わせて変更する
 
     } else {//どれでもなければ縦幅をcanvasSizeにする
-      let fixedWidth = Math.round(HEIGHT / imgSize.height * imgSize.width)
       ctx.drawImage(img, startX.value, startY.value, fixedWidth, HEIGHT)
       imgSize.width = fixedWidth;
       imgSize.height = HEIGHT; //imgSizeをcanvasSizeに合わせて変更する
     }
   }
-  if(startX.value>0 || startY.value>0){ //配置座標が変更されていたら
+  if(startX.value>0 || startY.value>0){ //配置座標が(0,0)以外だったら
     imgSize.width = Math.min(imgSize.width + startX.value, WIDTH);//colorReduction()に渡すwidthとheightを大きくする、キャンバスサイズをはみ出るならそこまでにする
     imgSize.height = Math.min(imgSize.height + startY.value, HEIGHT);
   }
@@ -197,6 +218,10 @@ function changeMode(e){
   }
   console.log(WIDTH, HEIGHT)
 }
+function changeAlign(e){
+  alignMode.value = e.target.value;
+  console.log(alignMode.value)
+}
 </script>
 
 <template>
@@ -230,6 +255,11 @@ function changeMode(e){
       <input type="number" v-model="inputH" />
     </label>
   </div>
+  <form id="selectAlign" @change="changeAlign" v-if="isBackgroundMode">
+    <label><input type="radio" name="alignMode" value="left" checked>左寄せ</label>
+    <label><input type="radio" name="alignMode" value="center">中央寄せ</label>
+    <label><input type="radio" name="alignMode" value="right">右寄せ</label>
+  </form>
   <br/>
   <label>
     PIC パターン番号の開始位置
