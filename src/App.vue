@@ -18,6 +18,7 @@ const startY = ref(0);
 
 let isBackgroundMode = true;
 const alignMode = ref("left");
+const backgroundNum = ref(1);
 
 const useInput = ref(false);
 const inputW = ref(640);
@@ -32,6 +33,7 @@ let colorIndexMap = []
 let canvas;
 let ctx;
 let outputArea;
+let outputGeneralFunc;
 
 let procedure;
 
@@ -39,6 +41,7 @@ onMounted(()=>{
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d",{ willReadFrequently: true });
   outputArea = document.getElementById("outputArea");
+  outputGeneralFunc = document.getElementById("outputGeneralFunc")
 });
 
 function loadLocalImage(e) {
@@ -200,9 +203,8 @@ end`;
   navigator.clipboard.writeText(outputJasmine.value);
 }
 
-function textareaOnClick(){
-  outputArea.select();
-  navigator.clipboard.writeText(outputJasmine.value)
+function textareaOnClick(e){
+  e.target.select();
 }
 
 function changeMode(e){
@@ -264,12 +266,17 @@ function changeAlign(e){
   <label>
     PIC パターン番号の開始位置
     <input type="number" v-model="startPicNum">
+  </label><br>
+  <label>
+    background番号の指定
+    <input v-if="isBackgroundMode" type="number" v-model="backgroundNum">
   </label>
   <br/><br/>
   <input @change="loadLocalImage" accept="image/*" type="file" name="file" id="file"><br/><br/>
   <button @click="drawImage" v-if="isImageLoaded">実行！</button><br/>
   <canvas id="canvas" :width="WIDTH" :height="HEIGHT"></canvas><br/>
-  <textarea id="outputArea" rows="25" cols="64" v-show="outputJasmine" readonly @click="textareaOnClick"></textarea><br/>
+  <textarea id="outputArea" rows="25" cols="48" readonly @click="textareaOnClick"></textarea>
+  <textarea id="outputGeneralFunc" rows="25" cols="48" readonly @click="textareaOnClick"></textarea><br/>
 </template>
 
 <style scoped>
@@ -278,5 +285,6 @@ function changeAlign(e){
     line-height: 1.5;
     width: 100%;
     padding: 10;
+    margin:10;
   }
 </style>
