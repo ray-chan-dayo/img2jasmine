@@ -9,8 +9,8 @@ export function exportAsJasmine(splittedImg) {
         const joined = String.fromCharCode(
           ...
           splittedImg[y][x].map(
-            // asciiコードに合わせて調整
-            v=>v+(v<25?66:73)
+            // "A"からはじまるようにオフセット
+            v=>v+66
           )
         )
         // 画像圧縮
@@ -49,9 +49,6 @@ procedure printBackground startPicNum,backgroundNum
         else
           for i=0 to 255
             pic@[i] = asc(mid$(picPattern$,i,1)) - 66
-            if pic@[i] > 26 then
-              pic@[i] = pic@[i] - 7
-            end if
           next
           def pic picNum,pic@
           picNumLs@[x+y*40] = picNum
