@@ -22,7 +22,7 @@ export function exportAsJasmine(splittedImg) {
       }
       i++
     }
-    splittedImg = result.join()
+    splittedImg = result.join("\n  data ")
 
 return `// Pic番号をstartPicNum+1000番まで上書きします。
 procedure printBackground startPicNum,backgroundNum
