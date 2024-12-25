@@ -257,7 +257,7 @@ function changeAlign(e){
       <input type="number" v-model="inputH" />
     </label>
   </div>
-  <form id="selectAlign" @change="changeAlign" v-if="isBackgroundMode">
+  <form id="selectAlign" @change="changeAlign" v-if="isBackgroundMode && !useInput">
     <label><input type="radio" name="alignMode" value="left" checked>左寄せ</label>
     <label><input type="radio" name="alignMode" value="center">中央寄せ</label>
     <label><input type="radio" name="alignMode" value="right">右寄せ</label>
