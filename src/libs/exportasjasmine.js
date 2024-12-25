@@ -5,13 +5,20 @@ export function exportAsJasmine(splittedImg) {
     let i = 0
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const joined = splittedImg[y][x].join()
+        // アルファベットに変換
+        const joined = String.fromCharCode(
+          ...
+          splittedImg[y][x].map(
+            // "A"からはじまるようにオフセット
+            v=>v+66
+          )
+        )
         // 画像圧縮
         const refIndex = result.indexOf(joined)
         if (refIndex === -1) 
           result.push(joined)
         else
-          result.push(`-2,${refIndex}`)
+          result.push(`p,${refIndex}`)
       }
       i++
     }
@@ -35,13 +42,13 @@ procedure printBackground startPicNum,backgroundNum
       let pic@=[]
       if x<w AND y<h then
         // readData
-        read pic@[0]
-        if pic@[0] = -2 then
+        read picPattern$
+        if picPattern$ = "p" then
           read reffingIndex
           picNumLs@[x+y*40] = reffingIndex + startPicNum
         else
-          for i=1 to 255
-            read pic@[i]
+          for i=0 to 255
+            pic@[i] = asc(mid$(picPattern$,i,1)) - 66
           next
           def pic picNum,pic@
           picNumLs@[x+y*40] = picNum
